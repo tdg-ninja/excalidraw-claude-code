@@ -309,6 +309,8 @@ import {
   actionFlipVertical,
   actionGroup,
   actionPasteStyles,
+  actionSaveFileToDisk,
+  actionSaveToActiveFile,
   actionSelectAll,
   actionSendBackward,
   actionSendToBack,
@@ -5406,7 +5408,12 @@ class App extends React.Component<AppProps, AppState> {
         // inside an input
         (isWritableElement(event.target) &&
           // unless pressing escape (finalize action)
-          event.key !== KEYS.ESCAPE) ||
+          event.key !== KEYS.ESCAPE &&
+          // unless it's the save shortcut, which must always reach the
+          // action manager so it doesn't fall through to the browser's
+          // native "save page" dialog (#9281)
+          !actionSaveToActiveFile.keyTest(event) &&
+          !actionSaveFileToDisk.keyTest(event)) ||
         // or unless using arrows (to move between buttons)
         (isArrowKey(event.key) && isInputLike(event.target))
       ) {
