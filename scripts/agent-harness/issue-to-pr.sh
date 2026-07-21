@@ -264,6 +264,23 @@ fi
 log "pushing ${BRANCH} to ${TARGET_REPO}..."
 git push --force-with-lease -u origin "$BRANCH"
 
+# excalidraw's semantic-pull-request check requires a conventional-commit
+# scope (app, editor, packages/excalidraw, packages/utils, docker, repo).
+# Infer it from where the fix actually landed rather than hardcoding one.
+changed_files="$(git diff --name-only "${base_ref}..HEAD")"
+if printf '%s\n' "$changed_files" | grep -q '^excalidraw-app/'; then
+  PR_SCOPE="app"
+elif printf '%s\n' "$changed_files" | grep -q '^packages/utils/'; then
+  PR_SCOPE="packages/utils"
+elif printf '%s\n' "$changed_files" | grep -q '^packages/excalidraw/'; then
+  PR_SCOPE="editor"
+elif printf '%s\n' "$changed_files" | grep -qE '(^|/)(Dockerfile|docker-compose\.ya?ml)$'; then
+  PR_SCOPE="docker"
+else
+  PR_SCOPE="repo"
+fi
+PR_TITLE="fix(${PR_SCOPE}): ${ISSUE_TITLE}"
+
 PR_BODY=$(printf 'Fixes %s\n\n%s\n\n---\n\nOpened autonomously by the `scripts/agent-harness/issue-to-pr.sh` agent harness: issue -> investigate -> implement -> independently re-verify (typecheck + lint + full test suite) -> PR, with no human in the loop. Verification log: `%s`.' \
   "$ISSUE_URL" "$ISSUE_TITLE" "verify-attempt-${attempt}.log")
 
@@ -271,7 +288,7 @@ pr_url="$(gh pr create \
   --repo "$TARGET_REPO" \
   --head "$BRANCH" \
   --base "$BASE_BRANCH" \
-  --title "fix: ${ISSUE_TITLE}" \
+  --title "$PR_TITLE" \
   --body "$PR_BODY")"
 
 log "PR opened: $pr_url"
