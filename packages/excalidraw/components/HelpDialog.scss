@@ -18,6 +18,11 @@
       gap: 0.75rem;
     }
 
+    &__search {
+      margin-top: 1rem;
+      width: 100%;
+    }
+
     &__btn {
       --background: var(--color-surface-mid);
 
