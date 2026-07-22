@@ -28,10 +28,9 @@ export class LaserTrails implements Trail {
       sizeMapping: (c) => {
         const DECAY_TIME = 1000;
         const DECAY_LENGTH = 50;
-        const t = Math.max(
-          0,
-          1 - (performance.now() - c.pressure) / DECAY_TIME,
-        );
+        const t = this.app.state.laserPointerPersistent
+          ? 1
+          : Math.max(0, 1 - (performance.now() - c.pressure) / DECAY_TIME);
         const l =
           (DECAY_LENGTH -
             Math.min(DECAY_LENGTH, c.totalLength - c.currentIndex)) /

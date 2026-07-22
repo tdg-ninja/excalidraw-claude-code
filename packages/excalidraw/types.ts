@@ -475,6 +475,13 @@ export interface AppState {
   gridStep: number;
   gridModeEnabled: boolean;
   viewModeEnabled: boolean;
+  /**
+   * When enabled, laser pointer trails no longer fade out on their own —
+   * they stay on the canvas until this is turned off again.
+   *
+   * @default false
+   */
+  laserPointerPersistent: boolean;
 
   /** top-most selected groups (i.e. does not include nested groups) */
   selectedGroupIds: { [groupId: string]: boolean };
