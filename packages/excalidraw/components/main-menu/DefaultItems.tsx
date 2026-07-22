@@ -11,6 +11,7 @@ import {
   actionShortcuts,
   actionToggleArrowBinding,
   actionToggleGridMode,
+  actionToggleLaserPointerPersistence,
   actionToggleMidpointSnapping,
   actionToggleObjectsSnapMode,
   actionToggleSearchMenu,
@@ -562,6 +563,23 @@ export const PreferencesToggleZenModeItem = () => {
   );
 };
 
+export const PreferencesToggleLaserPersistenceItem = () => {
+  const { t } = useI18n();
+  const actionManager = useExcalidrawActionManager();
+  const appState = useUIAppState();
+  return (
+    <DropdownMenuItemCheckbox
+      checked={appState.laserPointerPersistent}
+      onSelect={(event) => {
+        actionManager.executeAction(actionToggleLaserPointerPersistence);
+        event.preventDefault();
+      }}
+    >
+      {t("labels.toggleLaserPersistence")}
+    </DropdownMenuItemCheckbox>
+  );
+};
+
 const PreferencesToggleViewModeItem = () => {
   const { t } = useI18n();
   const actionManager = useExcalidrawActionManager();
@@ -622,6 +640,7 @@ export const Preferences = ({
             <PreferencesToggleSnapModeItem />
             <PreferencesToggleGridModeItem />
             <PreferencesToggleZenModeItem />
+            <PreferencesToggleLaserPersistenceItem />
             <PreferencesToggleViewModeItem />
             <PreferencesToggleElementPropertiesItem />
             <PreferencesToggleArrowBindingItem />
@@ -641,6 +660,7 @@ Preferences.ToggleArrowBinding = PreferencesToggleArrowBindingItem;
 Preferences.ToggleMidpointSnapping = PreferencesToggleMidpointSnappingItem;
 Preferences.ToggleGridMode = PreferencesToggleGridModeItem;
 Preferences.ToggleZenMode = PreferencesToggleZenModeItem;
+Preferences.ToggleLaserPersistence = PreferencesToggleLaserPersistenceItem;
 Preferences.ToggleViewMode = PreferencesToggleViewModeItem;
 Preferences.ToggleElementProperties = PreferencesToggleElementPropertiesItem;
 

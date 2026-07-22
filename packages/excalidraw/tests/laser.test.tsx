@@ -203,6 +203,53 @@ describe("laser tool interactions", () => {
 
     expect(svgLayer.querySelectorAll("path")).toHaveLength(0);
   });
+
+  it("keeps the laser trail visible while persistence is enabled, and lets it fade once it's turned off", async () => {
+    await render(<Excalidraw />);
+
+    let now = 0;
+    const nowSpy = vi.spyOn(performance, "now").mockImplementation(() => now);
+
+    const svgLayer = document.querySelector(".SVGLayer svg")!;
+    const getTrailPath = () =>
+      Array.from(svgLayer.querySelectorAll("path")).find((path) =>
+        path.getAttribute("d"),
+      );
+
+    try {
+      API.setAppState({ laserPointerPersistent: true });
+      act(() => {
+        h.app.setActiveTool({ type: "laser" });
+      });
+
+      mouse.downAt(30, 30);
+      mouse.moveTo(80, 80);
+      mouse.upAt(80, 80);
+
+      await waitFor(() => {
+        expect(getTrailPath()).toBeTruthy();
+      });
+
+      // fast-forward well past the trail's usual decay window (1000ms) —
+      // persistence should keep it fully visible regardless
+      now += 5000;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(getTrailPath()).toBeTruthy();
+
+      now += 5000;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(getTrailPath()).toBeTruthy();
+
+      // turning persistence off lets the already-drawn trail decay again
+      API.setAppState({ laserPointerPersistent: false });
+
+      await waitFor(() => {
+        expect(getTrailPath()).toBeFalsy();
+      });
+    } finally {
+      nowSpy.mockRestore();
+    }
+  });
 });
 
 describe("iframe-like element hit testing outside frame bounds", () => {
