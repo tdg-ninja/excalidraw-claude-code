@@ -212,6 +212,9 @@ class Portal {
           button: payload.button || "up",
           selectedElementIds:
             this.collab.excalidrawAPI.getAppState().selectedElementIds,
+          editingElementId:
+            this.collab.excalidrawAPI.getAppState().editingTextElement?.id ??
+            null,
           username: this.collab.state.username,
         },
       };

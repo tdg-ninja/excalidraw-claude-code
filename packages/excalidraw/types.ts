@@ -74,6 +74,8 @@ export type Collaborator = Readonly<{
   pointer?: CollaboratorPointer;
   button?: "up" | "down";
   selectedElementIds?: AppState["selectedElementIds"];
+  // the id of the element the collaborator is currently editing text in, if any
+  editingElementId?: string | null;
   username?: string | null;
   userState?: UserIdleState;
   color?: {

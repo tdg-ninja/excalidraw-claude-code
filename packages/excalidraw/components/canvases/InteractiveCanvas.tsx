@@ -100,6 +100,8 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
       new Map();
     const remoteSelectedElementIds: InteractiveCanvasRenderConfig["remoteSelectedElementIds"] =
       new Map();
+    const remoteEditingElementIds: InteractiveCanvasRenderConfig["remoteEditingElementIds"] =
+      new Map();
     const remotePointerUsernames: InteractiveCanvasRenderConfig["remotePointerUsernames"] =
       new Map();
     const remotePointerUserStates: InteractiveCanvasRenderConfig["remotePointerUserStates"] =
@@ -113,6 +115,12 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
           }
           remoteSelectedElementIds.get(id)!.push(socketId);
         }
+      }
+      if (user.editingElementId) {
+        if (!remoteEditingElementIds.has(user.editingElementId)) {
+          remoteEditingElementIds.set(user.editingElementId, []);
+        }
+        remoteEditingElementIds.get(user.editingElementId)!.push(socketId);
       }
       if (!user.pointer || user.pointer.renderCursor === false) {
         return;
@@ -156,6 +164,7 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
         remotePointerViewportCoords,
         remotePointerButton,
         remoteSelectedElementIds,
+        remoteEditingElementIds,
         remotePointerUsernames,
         remotePointerUserStates,
         selectionColor,
