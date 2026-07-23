@@ -99,6 +99,7 @@ export type SocketUpdateDataSource = {
       pointer: { x: number; y: number; tool: "pointer" | "laser" };
       button: "down" | "up";
       selectedElementIds: AppState["selectedElementIds"];
+      editingElementId: string | null;
       username: string;
     };
   };

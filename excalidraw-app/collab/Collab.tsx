@@ -608,8 +608,13 @@ class Collab extends PureComponent<CollabProps, CollabState> {
             );
             break;
           case WS_SUBTYPES.MOUSE_LOCATION: {
-            const { pointer, button, username, selectedElementIds } =
-              decryptedData.payload;
+            const {
+              pointer,
+              button,
+              username,
+              selectedElementIds,
+              editingElementId,
+            } = decryptedData.payload;
 
             const socketId: SocketUpdateDataSource["MOUSE_LOCATION"]["payload"]["socketId"] =
               decryptedData.payload.socketId ||
@@ -620,6 +625,7 @@ class Collab extends PureComponent<CollabProps, CollabState> {
               pointer,
               button,
               selectedElementIds,
+              editingElementId,
               username,
             });
 

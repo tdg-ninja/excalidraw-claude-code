@@ -1813,6 +1813,9 @@ const _renderInteractiveScene = ({
         const remoteClients = renderConfig.remoteSelectedElementIds.get(
           element.id,
         );
+        const remoteEditors = renderConfig.remoteEditingElementIds.get(
+          element.id,
+        );
         if (
           !(
             // Elbow arrow elements cannot be selected when bound on either end
@@ -1842,6 +1845,20 @@ const _renderInteractiveScene = ({
               }),
             );
           }
+          // remote users currently editing this element's text, if not
+          // already accounted for via their selection above
+          if (remoteEditors) {
+            selectionColors.push(
+              ...remoteEditors
+                .filter((socketId) => !remoteClients?.includes(socketId))
+                .map((socketId) =>
+                  getClientColor(
+                    socketId,
+                    appState.collaborators.get(socketId),
+                  ),
+                ),
+            );
+          }
         }
 
         if (selectionColors.length) {
@@ -1857,7 +1874,9 @@ const _renderInteractiveScene = ({
             x2,
             y2,
             selectionColors: element.locked ? ["#ced4da"] : selectionColors,
-            dashed: !!remoteClients || element.locked,
+            // a solid border signals someone is actively editing the element,
+            // as opposed to the dashed border used for a mere remote selection
+            dashed: (!!remoteClients && !remoteEditors) || element.locked,
             cx,
             cy,
             activeEmbeddable:
